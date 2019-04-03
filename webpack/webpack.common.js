@@ -24,19 +24,6 @@ module.exports = {
         exclude: /(node_modules)/,
       },
       {
-        test: /\.(png|jpg|gif|svg)$/,
-        use: [
-          {
-            loader: 'url-loader',
-            options: {
-              limit: 8192,
-              mimetype: 'image/png',
-              name: 'images/[name].[ext]',
-            },
-          },
-        ],
-      },
-      {
         test: /\.(woff2|ttf|woff|eot)$/,
         use: [
           {
