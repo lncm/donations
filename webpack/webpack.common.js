@@ -27,9 +27,11 @@ module.exports = {
         test: /\.(png|jpg|gif|svg)$/,
         use: [
           {
-            loader: 'file-loader',
+            loader: 'url-loader',
             options: {
-              outputPath: commonPaths.imagesFolder,
+              limit: 8192,
+              mimetype: 'image/png',
+              name: 'images/[name].[ext]',
             },
           },
         ],

@@ -17,6 +17,10 @@ module.exports = {
         test: /\.(css|scss)$/,
         use: ['style-loader', 'css-loader', 'sass-loader'],
       },
+      {
+        test: /\.(jpe?g|png|ttf|eot|svg|woff(2)?)(\?[a-z0-9=&.]+)?$/,
+        use: 'base64-inline-loader?limit=10000&name=[name].[ext]',
+      },
     ],
   },
   plugins: [
@@ -29,14 +33,11 @@ module.exports = {
         context: __dirname,
       },
     }),
-    new CleanWebpackPlugin([commonPaths.outputPath.split('/').pop()], {
-      root: commonPaths.root,
-    }),
+    new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({
       filename: `${commonPaths.cssFolder}/[name].css`,
       chunkFilename: '[id].css',
     }),
     new ScriptExtHtmlWebpackPlugin({ inline: /\.js$/ }),
   ],
-  devtool: 'source-map',
 };

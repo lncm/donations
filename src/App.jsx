@@ -5,6 +5,7 @@ import QRCode from 'qrcode.react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faQrcode, faBolt } from '@fortawesome/free-solid-svg-icons';
 import { faClipboard } from '@fortawesome/free-regular-svg-icons';
+import 'react-tabs/style/react-tabs.scss';
 
 import Qr from './components/Qr';
 import AmountPicker from './components/AmountPicker';
@@ -16,19 +17,12 @@ import {
   MAX_LN_PAYMENT,
   DOMAIN,
 } from './config';
-
-import 'react-tabs/style/react-tabs.scss';
 import './css/main.scss';
+import logo from './img/logo.png';
 
 class App extends Component {
-  static description(sats, isDonation = true, to = RECIPIENT, convertToFiat) {
-    let humanAmount = AmountPicker.labelFor(sats);
-
-    if (convertToFiat !== undefined) {
-      // TODO: Convert sats to fiat specified in `convertToFiat`
-      humanAmount = `CONVERTED_AMOUNT ${convertToFiat.toUpperCase()}`;
-    }
-
+  static description(sats, isDonation = true, to = RECIPIENT) {
+    const humanAmount = AmountPicker.labelFor(sats);
     return `${isDonation ? 'Donation' : 'Payment'} of ${humanAmount} to ${to}`;
   }
 
@@ -140,7 +134,7 @@ class App extends Component {
     return (
       <div id="app">
         <div id="logo">
-          <img alt="logo" height="64px" width="64px" />
+          <img alt="logo" src={logo} height="64px" width="64px" />
           <h2>Donate to {RECIPIENT}</h2>
         </div>
 
