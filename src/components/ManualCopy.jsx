@@ -1,47 +1,39 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClipboard } from '@fortawesome/free-regular-svg-icons';
 import { faClipboardCheck } from '@fortawesome/free-solid-svg-icons';
 
-class ManualCopy extends Component {
-  constructor() {
-    super();
+function ManualCopy(props) {
+  const { text, label, children, copyFn, copied } = props;
 
-    this.state = {
-      lastText: undefined,
-    };
+  let copyContent;
+  if (children !== undefined && !!text && text.length > 0) {
+    copyContent = <div className="copy-extra">{children}</div>;
   }
 
-  render() {
-    const { text, label, children } = this.props;
-    const { lastText } = this.state;
+  return (
+    <fieldset className="copy">
+      <legend>{label}</legend>
+      <input disabled value={text} />
 
-    return (
-      <fieldset className="copy">
-        <legend>{label}</legend>
-        <input disabled value={text} />
-
-        <CopyToClipboard
-          disabled={!text || text.length === 0}
-          text={text}
-          onCopy={() => this.setState({ lastText: text })}
-        >
-          <button type="button">
-            <FontAwesomeIcon
-              icon={
-                lastText === undefined || lastText !== text
-                  ? faClipboard
-                  : faClipboardCheck
-              }
-            />
-          </button>
-        </CopyToClipboard>
-        {children}
-      </fieldset>
-    );
-  }
+      <CopyToClipboard
+        disabled={!text || text.length === 0}
+        text={text}
+        onCopy={() => copyFn(text)}
+      >
+        <FontAwesomeIcon
+          icon={
+            copied === undefined || copied !== text
+              ? faClipboard
+              : faClipboardCheck
+          }
+        />
+      </CopyToClipboard>
+      {copyContent}
+    </fieldset>
+  );
 }
 
 ManualCopy.propTypes = {
@@ -52,6 +44,8 @@ ManualCopy.propTypes = {
     PropTypes.object,
     PropTypes.string,
   ]),
+  copyFn: PropTypes.func,
+  copied: PropTypes.string,
 };
 
 ManualCopy.defaultProps = {

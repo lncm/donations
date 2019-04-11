@@ -1,11 +1,6 @@
 import React, { Component } from 'react';
 import { hot } from 'react-hot-loader';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import QRCode from 'qrcode.react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faQrcode, faBolt } from '@fortawesome/free-solid-svg-icons';
-import { faClipboard } from '@fortawesome/free-regular-svg-icons';
-import 'react-tabs/style/react-tabs.scss';
 
 import Qr from './components/Qr';
 import AmountPicker from './components/AmountPicker';
@@ -58,12 +53,17 @@ class App extends Component {
       connString: '',
     };
 
+    this.copyFn = this.copyFn.bind(this);
     this.updateAmount = this.updateAmount.bind(this);
   }
 
   async componentDidMount() {
     await this.updateAmount(0);
     await this.setConnString();
+  }
+
+  copyFn(copied) {
+    this.setState({ copied });
   }
 
   async updateAmount(sats) {
@@ -120,7 +120,7 @@ class App extends Component {
   }
 
   render() {
-    const { sats, bolt11, address, connString } = this.state;
+    const { sats, bolt11, address, connString, copied } = this.state;
 
     let invoiceAmount;
     if (sats === -1) {
@@ -134,43 +134,41 @@ class App extends Component {
     return (
       <div id="app">
         <div id="logo">
-          <img alt="logo" src={logo} height="64px" width="64px" />
-          <h2>Donate to {RECIPIENT}</h2>
+          <img alt="logo" src={logo} />
+          <h2>
+            Donate to <b>{RECIPIENT}</b>
+          </h2>
         </div>
 
-        <Tabs className="data">
-          <TabList>
-            <Tab>
-              <FontAwesomeIcon icon={faBolt} style={{ color: 'gold' }} />
-              &nbsp;
-              <FontAwesomeIcon icon={faQrcode} />
-              &nbsp; Donate
-            </Tab>
-            <Tab>
-              <small>
-                <FontAwesomeIcon icon={faClipboard} /> Advanced
-              </small>
-            </Tab>
-          </TabList>
+        <Qr sats={sats} bolt11={bolt11} address={address} />
 
-          <TabPanel>
-            <Qr sats={sats} bolt11={bolt11} address={address} />
-          </TabPanel>
-
-          <TabPanel className="manuals">
-            <ManualCopy text={bolt11} label="BOLT11 Invoice" />
-            <ManualCopy text={address} label="Bitcoin Address" />
-            <ManualCopy text={connString} label="Connection String">
-              <QRCode value={connString} size={250} renderAs="svg" />
-            </ManualCopy>
-          </TabPanel>
-        </Tabs>
-
-        <div id="choice">
+        <p id="choice">
           Invoice Amount: <b>{invoiceAmount}</b>
-        </div>
+        </p>
 
         <AmountPicker min={0} max={1e7} updateAmount={this.updateAmount} />
+
+        <div className="manuals">
+          <ManualCopy
+            label="BOLT11 Invoice"
+            text={bolt11}
+            copyFn={this.copyFn}
+            copied={copied}
+          />
+          <ManualCopy
+            label="Bitcoin Address"
+            text={address}
+            copyFn={this.copyFn}
+            copied={copied}
+          />
+          <ManualCopy
+            label="Connection String"
+            text={connString}
+            copyFn={this.copyFn}
+            copied={copied}>
+            <QRCode value={connString} size={250} renderAs="svg" />
+          </ManualCopy>
+        </div>
       </div>
     );
   }

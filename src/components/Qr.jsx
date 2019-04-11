@@ -38,13 +38,17 @@ class Qr extends Component {
   render() {
     const { sats } = this.props;
     if (sats === -1) {
-      return <Loader type="MutatingDot" height="100" width="100" />;
+      return (
+        <div className="qr qr-loading">
+          <Loader type="MutatingDot" height="100" width="100" />
+        </div>
+      );
     }
 
     const value = this.formatString();
     return (
-      <a id="qr" href={value}>
-        <QRCode value={value} size={500} renderAs="svg" />
+      <a className="qr qr-pending" href={value}>
+        <QRCode className="qr-code" value={value} size={500} renderAs="svg" />
       </a>
     );
   }
