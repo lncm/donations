@@ -70,10 +70,11 @@ class AmountPicker extends Component {
   }
 
   render() {
-    const { min, max } = this.props;
+    const { min, max, amount } = this.props;
 
     return (
       <MySlider
+        defaultValue={inverseCurve(amount)}
         min={inverseCurve(!min ? 1 : min)}
         max={inverseCurve(max)}
         marks={AmountPicker.generateMarks(min, max)}
@@ -98,6 +99,7 @@ AmountPicker.propTypes = {
   updateAmount: PropTypes.func,
   min: PropTypes.number,
   max: PropTypes.number,
+  amount: PropTypes.number,
 };
 
 export default AmountPicker;

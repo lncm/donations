@@ -1,55 +1,43 @@
 import React, { Component } from 'react';
 import { hot } from 'react-hot-loader';
 import QRCode from 'qrcode.react';
+import qs from 'query-string';
 
 import Qr from './components/Qr';
 import AmountPicker from './components/AmountPicker';
 import ManualCopy from './components/ManualCopy';
-import {
-  RECIPIENT,
-  PAYMENT_URL,
-  INFO_URL,
-  MAX_LN_PAYMENT,
-  DOMAIN,
-} from './config';
+import { RECIPIENT, MAX_LN_PAYMENT, DOMAIN } from './config';
 import './css/main.scss';
 import logo from './img/logo.png';
+import Invoicer from './invoicer';
 
 class App extends Component {
-  static description(sats, isDonation = true, to = RECIPIENT) {
-    const humanAmount = AmountPicker.labelFor(sats);
-    return `${isDonation ? 'Donation' : 'Payment'} of ${humanAmount} to ${to}`;
-  }
+  static getInitialAmountInSats() {
+    const { amount } = qs.parse(window.location.search);
 
-  static async newPayment(sats, only) {
-    const body = {
-      amount: parseInt(sats, 10),
-      desc: App.description(sats, true),
-    };
-
-    if (only) {
-      body.only = only;
+    if (!amount) {
+      return 0;
     }
 
-    const resp = await fetch(PAYMENT_URL, {
-      method: 'POST',
-      body: JSON.stringify(body),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    const initialAmount = parseFloat(amount);
+    if (Number.isNaN(initialAmount)) {
+      return 0;
+    }
 
-    return resp.json();
-  }
+    // assume Bitcoin
+    if (initialAmount < 1) {
+      return initialAmount * 1e8;
+    }
 
-  static async nodeInfo() {
-    return (await fetch(INFO_URL)).json();
+    // assume sats
+    return initialAmount;
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      sats: -1,
+      first: true,
+      sats: App.getInitialAmountInSats(),
       connString: '',
     };
 
@@ -58,7 +46,16 @@ class App extends Component {
   }
 
   async componentDidMount() {
-    await this.updateAmount(0);
+    const { protocol, host, pathname } = window.location;
+    window.history.replaceState(
+      {},
+      document.title,
+      protocol + '//' + host + pathname,
+    );
+
+    const { sats = 0 } = this.state;
+
+    await this.updateAmount(sats);
     await this.setConnString();
   }
 
@@ -67,13 +64,13 @@ class App extends Component {
   }
 
   async updateAmount(sats) {
-    const { sats: prevSats, address: prevAddress } = this.state;
+    const { first, sats: prevSats, address: prevAddress } = this.state;
 
-    if (sats === prevSats) {
+    if (sats === prevSats && !first) {
       return;
     }
 
-    this.setState({ sats: -1 });
+    this.setState({ sats: -1, first: false });
 
     let only;
     if (prevAddress !== undefined) {
@@ -89,7 +86,7 @@ class App extends Component {
     }
 
     if (sats <= MAX_LN_PAYMENT || prevAddress === undefined) {
-      const { address, bolt11, hash } = await App.newPayment(sats, only);
+      const { address, bolt11, hash } = await Invoicer.newPayment(sats, only);
       this.setState({ bolt11, hash });
 
       if (prevAddress === undefined) {
@@ -101,19 +98,23 @@ class App extends Component {
   }
 
   async setConnString() {
-    const info = await App.nodeInfo();
+    const info = await Invoicer.nodeInfo();
 
     if (!info || info.length === 0) {
       this.setState({ connString: 'Unknown at this time' });
       return;
     }
 
-    const parts = info[0].split(/([@:])/);
+    let connString = info[0];
 
-    let connString = `${parts[0]}@${DOMAIN}`;
+    if (!!DOMAIN && DOMAIN.length > 0) {
+      const parts = connString.split(/([@:])/);
 
-    if (parts.length === 5) {
-      connString += `:${parts[4]}`;
+      connString = `${parts[0]}@${DOMAIN}`;
+
+      if (parts.length === 5) {
+        connString += `:${parts[4]}`;
+      }
     }
 
     this.setState({ connString });
@@ -146,7 +147,12 @@ class App extends Component {
           Invoice Amount: <b>{invoiceAmount}</b>
         </p>
 
-        <AmountPicker min={0} max={1e7} updateAmount={this.updateAmount} />
+        <AmountPicker
+          min={0}
+          max={1e7}
+          amount={sats}
+          updateAmount={this.updateAmount}
+        />
 
         <div className="manuals">
           <ManualCopy
@@ -165,7 +171,8 @@ class App extends Component {
             label="Connection String"
             text={connString}
             copyFn={this.copyFn}
-            copied={copied}>
+            copied={copied}
+          >
             <QRCode value={connString} size={250} renderAs="svg" />
           </ManualCopy>
         </div>

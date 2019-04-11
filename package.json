@@ -86,6 +86,7 @@
     "prettier": "1.16.4",
     "pretty-quick": "1.10.0",
     "qrcode.react": "^0.9.3",
+    "query-string": "^6.4.2",
     "rc-slider": "^8.6.9",
     "react-copy-to-clipboard": "^5.0.1",
     "react-hot-loader": "4.8.2",

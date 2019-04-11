@@ -4,4 +4,4 @@ export const PAYMENT_URL = `http://${DOMAIN}:${INVOICER_PORT}/api/payment`;
 export const INFO_URL = `http://${DOMAIN}:${INVOICER_PORT}/api/info`;
 export const RECIPIENT = 'LNCM';
 
-export const MAX_LN_PAYMENT = 4294967;
+export const MAX_LN_PAYMENT = 2 ** 32; // 4294967;
