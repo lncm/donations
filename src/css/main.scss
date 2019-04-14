@@ -1,21 +1,26 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:400,700|Roboto+Mono');
 
+// I like Roboto 🤷🏻‍♂️
 body {
   background: #fff;
   font-family: 'Roboto', sans-serif;
 }
 
+// Make sure main container has max-width and is centered
 #app {
   padding: 15px;
   max-width: 600px;
   margin: auto;
 }
 
+// Use display:flex to organize image and description horizontally, but vertically aligned with neat line wrap.
 #logo {
   display: flex;
   width: 100%;
   height: 100px;
   align-items: center;
+  text-decoration: none;
+  color: black;
 
   img {
     height: 100%;
@@ -23,10 +28,13 @@ body {
 
   h2 {
     margin-left: 10px;
+
+    // Allows font to be bigger on bigger displays
     font-size: 9vw;
   }
 }
 
+// make header section smaller on small phones
 @media (max-width: 400px) {
   #logo {
     height: 64px;
@@ -37,14 +45,17 @@ body {
   }
 }
 
+// make sure header font doesn't grow too big on very big displays
 @media (min-width: 600px) {
   #logo h2 {
     font-size: 55px;
   }
 }
 
+// make QR code as big as it can comfortably be, and resize it according to available screen space
 .qr {
   display: block;
+  position: relative;
   margin-top: 20px;
 
   .qr-code {
@@ -52,14 +63,75 @@ body {
     height: auto;
     max-height: 55vh;
   }
+
+  // overlay used to display success|errors is initially hidden
+  .qr-overlay {
+    display: none;
+  }
 }
 
+// After a new amount is known, but invoice is not yet acquired, display a nice loader.
+//    This tries to reserve enough space for the loader.
+// TODO: make it always the same size as QR code, so that bottom section doesn't jump… (@Sztuka halp?)
 .qr-loading > div {
   width: 100%;
   height: auto;
   max-height: 55vh;
 }
 
+// When invoice either paid or expired
+.qr-paid, .qr-expired {
+
+  // Disable clickability of the QR code in either case
+  pointer-events: none;
+  cursor: default;
+
+  // Blur the code out, to prevent further scanning
+  .qr-code {
+    filter: blur(8px);
+  }
+
+  // Show an informational overlay
+  //  using display flex to neatly organize things.  Making sure it's above, and the same size as the QR code
+  .qr-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    z-index: 2;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+
+    svg {
+      height: 128px;
+      width: auto;
+    }
+
+    span {
+      max-width: 250px;
+      font-size: 24px;
+
+      // make sure it's possible to read the text on the blurred QR code background
+      text-shadow: black 0 0 10px;
+    }
+  }
+}
+
+
+// If `.qr-paid` class exists in DOM, show `.qr-success`.  Set color of all font elements within to `lime`.
+.qr-paid .qr-success {
+  display: flex;
+  color: lime;
+}
+
+// If `.qr-expired` class exists in DOM, show `.qr-fail`. Set color of all font elements within to `red`.
+.qr-expired .qr-fail {
+  display: flex;
+  color: red;
+}
+
+// Visually reinforce user's chosen amount just below the main QR code
 #choice {
   text-align: center;
 
@@ -68,23 +140,27 @@ body {
   }
 }
 
+// Define space that the slider is allowed to take.  Make sure it's centered, and has enough height.
 .rc-slider {
   height: 50px;
   margin-right: 20px;
   margin-left: 20px;
   width: auto;
 
+  // Make sure labels below the slider aren't wrapped
   .rc-slider-mark-text {
     white-space: nowrap;
   }
 }
 
+// For screens smaller than 500px, rotate labels by 45°. ` translate(X|Y)` is just preserved.
 @media (max-width: 500px) {
   .rc-slider-mark-text {
     transform: translateX(-50%) translateY(40%) rotate(45deg) !important;
   }
 }
 
+// Cap size of the slider for big screens
 @media (min-width: 630px) {
   .rc-slider {
     width: 530px;
@@ -92,6 +168,7 @@ body {
   }
 }
 
+// padding here is best guess, ideally it would be something more logical
 #goo-loader {
   padding: 35%;
   margin: auto;
@@ -99,6 +176,7 @@ body {
 }
 
 
+// This defines the look of all manual copy/advanced fields below.
 .copy {
   margin: 30px 0;
   padding: 16px;
@@ -121,61 +199,25 @@ body {
     height: 26px;
     margin: 0 4%;
     display: inline-block;
+
+    // hovering over clipboard icon should indicate that it's clickable
     cursor: pointer;
   }
 
+  // this styles the extra content within `<ManualCopy />` element.  Currently only an svg of a 2nd QR code.
   .copy-extra {
     margin-top: 30px;
-    & > svg {
 
+    & > svg {
       margin: auto;
       display: block;
     }
   }
 }
 
+// Shorten all inputs on displays smaller than 500px
 @media (max-width: 500px) {
   .copy input {
     width: 70%;
   }
 }
-
-
-//.manuals {
-//  height: 100%;
-//}
-//
-//.copy {
-//  border-radius: 6px;
-//  background-color: whitesmoke;
-//  border-color: gold;
-//  border-width: 3px;
-//  border-style: solid;
-//  margin-top: 10px;
-//
-//  legend {
-//    background: gold;
-//    border-radius: 5px;
-//    padding: 2px 5px;
-//    color: white;
-//    font-weight: bold;
-//  }
-//
-//  input {
-//    font-family: 'Roboto Mono', monospace;
-//    background: whitesmoke;
-//    border: 0;
-//  }
-//
-//  button {
-//    svg {
-//      min-height: 20px;
-//      min-width: 20px;
-//      height: 40%;
-//      width: auto !important;
-//    }
-//  }
-//}
-
-
-

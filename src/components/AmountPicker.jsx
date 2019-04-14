@@ -8,7 +8,18 @@ const MySlider = Slider.createSliderWithTooltip(Slider);
 const sliderCurve = v => (v === 0 ? 0 : Math.exp(v));
 const inverseCurve = Math.log;
 
+// AmountPicker displays a logarithmic slider, its labels and a tooltip.
+//    It can be configured with:
+//      `updateAmount` fn(int) - a fn that takes an integer value of satoshis,
+//          and is called every time the amount selected on the slider changes.
+//      `min` - integer indicating what slider's minimum value should be
+//      `max` - integer indicating what slider's maximum value should be
+//      `amount` - sets the initial amount of the slider
 class AmountPicker extends Component {
+  // labelFor creates a textual representation of the amount.
+  //    if 0 - displays "Custom"
+  //    if smaller than 1M sats - displays amount in sats.  Groups digits by 3.
+  //    if bigger  - displays the amount in BTC
   static labelFor(x) {
     if (x === 0) {
       return 'Custom';
@@ -37,6 +48,8 @@ class AmountPicker extends Component {
     return `${(x / 1e8).toFixed(8)} BTC`;
   }
 
+  // generateMarks finds all powers of 10 in-between `start` and `end`,
+  //    generates labels and "real" values for them.
   static generateMarks(start, end) {
     if (start !== 0 && start !== 1 && !Number.isInteger(Math.log10(start))) {
       throw new Error('`start` must be 0, 1 or a multiple of 10');
@@ -56,12 +69,16 @@ class AmountPicker extends Component {
     return marks;
   }
 
+  // constructor is vanilla, plus it makes sure `handleAfterChange` will run in
+  //    class context.
   constructor(x) {
     super(x);
 
     this.handleAfterChange = this.handleAfterChange.bind(this);
   }
 
+  // handleAfterChange processes the amount that has been selected on the slider,
+  //    and a calls `updateAmount` with the result.
   handleAfterChange(value) {
     const { updateAmount } = this.props;
     const sats = Math.round(sliderCurve(value));

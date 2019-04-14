@@ -1,7 +1,14 @@
 {
   "parser": "babel-eslint",
-  "plugins": ["react", "prettier"],
-  "extends": ["airbnb", "plugin:prettier/recommended", "prettier/react"],
+  "plugins": [
+    "react",
+    "prettier"
+  ],
+  "extends": [
+    "airbnb",
+    "plugin:prettier/recommended",
+    "prettier/react"
+  ],
   "globals": {
     "React": true,
     "document": true,
@@ -13,7 +20,10 @@
   },
   "root": true,
   "rules": {
-    "indent": ["error", 2],
+    "indent": [
+      "error",
+      2
+    ],
     "react/prefer-stateless-function": "warn",
     "react/self-closing-comp": [
       "warn",
@@ -32,17 +42,43 @@
           "rendering"
         ],
         "groups": {
-          "rendering": ["/^render.+$/", "render"]
+          "rendering": [
+            "/^render.+$/",
+            "render"
+          ]
         }
       }
     ],
     "react/require-default-props": 0,
     "jsx-a11y/href-no-hash": "off",
-    "jsx-a11y/anchor-is-valid": ["warn", { "aspects": ["invalidHref"] }],
-    "react/jsx-boolean-value": ["warn", "never"],
-    "react/jsx-curly-spacing": ["warn", "never"],
-    "react/jsx-filename-extension": ["warn", { "extensions": [".jsx"] }],
-    "react/jsx-first-prop-new-line": ["warn", "multiline"],
+    "jsx-a11y/anchor-is-valid": [
+      "warn",
+      {
+        "aspects": [
+          "invalidHref"
+        ]
+      }
+    ],
+    "react/jsx-boolean-value": [
+      "warn",
+      "never"
+    ],
+    "react/jsx-curly-spacing": [
+      "warn",
+      "never"
+    ],
+    "react/jsx-filename-extension": [
+      "warn",
+      {
+        "extensions": [
+          ".jsx"
+        ]
+      }
+    ],
+    "react/jsx-first-prop-new-line": [
+      "warn",
+      "multiline"
+    ],
     "react/jsx-handler-names": [
       "warn",
       {
@@ -50,11 +86,21 @@
         "eventHandlerPropPrefix": "on"
       }
     ],
-    "react/jsx-indent": ["warn", 2],
+    "react/jsx-indent": [
+      "warn",
+      2
+    ],
     "react/jsx-key": "error",
-    "react/jsx-wrap-multilines": ["warn"],
+    "react/jsx-wrap-multilines": [
+      "warn"
+    ],
     "react/jsx-indent-props": 0,
-    "no-trailing-spaces": [2, { "skipBlankLines": true }],
+    "no-trailing-spaces": [
+      2,
+      {
+        "skipBlankLines": true
+      }
+    ],
     "prefer-template": 0,
     "import/prefer-default-export": 0,
     "import/no-unresolved": 0,

@@ -3,7 +3,12 @@ import { hot } from 'react-hot-loader';
 import QRCode from 'qrcode.react';
 import qs from 'query-string';
 
-import Qr from './components/Qr';
+import Qr, {
+  STATE_LOADING,
+  STATE_PENDING,
+  STATE_EXPIRED,
+  STATE_PAID,
+} from './components/Qr';
 import AmountPicker from './components/AmountPicker';
 import ManualCopy from './components/ManualCopy';
 import { RECIPIENT, MAX_LN_PAYMENT, DOMAIN } from './config';
@@ -11,6 +16,7 @@ import './css/main.scss';
 import logo from './img/logo.png';
 import Invoicer from './invoicer';
 
+// That thing needs to be split into chunks probably…
 class App extends Component {
   static getInitialAmountInSats() {
     const { amount } = qs.parse(window.location.search);
@@ -38,6 +44,7 @@ class App extends Component {
     this.state = {
       first: true,
       sats: App.getInitialAmountInSats(),
+      state: STATE_LOADING,
       connString: '',
     };
 
@@ -46,6 +53,7 @@ class App extends Component {
   }
 
   async componentDidMount() {
+    // After amount has been red from the URL, get rid of it
     const { protocol, host, pathname } = window.location;
     window.history.replaceState(
       {},
@@ -66,11 +74,12 @@ class App extends Component {
   async updateAmount(sats) {
     const { first, sats: prevSats, address: prevAddress } = this.state;
 
+    // TODO: possible case on first open where amount doesn't change 0 => 0
     if (sats === prevSats && !first) {
       return;
     }
 
-    this.setState({ sats: -1, first: false });
+    this.setState({ state: STATE_LOADING, first: false });
 
     let only;
     if (prevAddress !== undefined) {
@@ -94,7 +103,43 @@ class App extends Component {
       }
     }
 
-    this.setState({ sats });
+    this.setState({ sats, state: STATE_PENDING });
+
+    (async () => {
+      const status = await this.trackStatus();
+
+      if (status.error && status.error === STATE_EXPIRED) {
+        this.setState({ state: STATE_EXPIRED });
+        return;
+      }
+
+      if (status.ln) {
+        // const { amount, is_paid: isPaid } = status.ln;
+        const { is_paid: isPaid } = status.ln;
+
+        if (!isPaid) {
+          // TODO: show error somehow
+          return;
+        }
+
+        // TODO: show received `amount` somehow
+        this.setState({ state: STATE_PAID });
+        return;
+      }
+
+      if (status.bitcoin) {
+        // const { address, amount, confirmations, txids } = status.bitcoin;
+        const { amount } = status.bitcoin;
+
+        if (amount === 0) {
+          // TODO: show error somehow
+          return;
+        }
+
+        // TODO: show more info about received bitcoin transaction somehow
+        this.setState({ state: STATE_PAID });
+      }
+    })();
   }
 
   async setConnString() {
@@ -120,8 +165,13 @@ class App extends Component {
     this.setState({ connString });
   }
 
+  trackStatus() {
+    const { address, hash } = this.state;
+    return Invoicer.trackPayment(hash, address);
+  }
+
   render() {
-    const { sats, bolt11, address, connString, copied } = this.state;
+    const { sats, bolt11, address, state, connString, copied } = this.state;
 
     let invoiceAmount;
     if (sats === -1) {
@@ -134,14 +184,14 @@ class App extends Component {
 
     return (
       <div id="app">
-        <div id="logo">
+        <a href="https://lncm.io" id="logo">
           <img alt="logo" src={logo} />
           <h2>
             Donate to <b>{RECIPIENT}</b>
           </h2>
-        </div>
+        </a>
 
-        <Qr sats={sats} bolt11={bolt11} address={address} />
+        <Qr state={state} sats={sats} bolt11={bolt11} address={address} />
 
         <p id="choice">
           Invoice Amount: <b>{invoiceAmount}</b>
