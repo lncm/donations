@@ -1,6 +1,6 @@
 {
   "name": "donations",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "description": "LN donations page",
   "main": "index.js",
   "scripts": {
