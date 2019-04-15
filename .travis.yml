@@ -1,9 +1,5 @@
 language: node_js
 dist: xenial
-node_js:
-- '11'
-- '10'
-- '9'
 
 script: npm run build
 
