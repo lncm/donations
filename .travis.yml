@@ -4,7 +4,7 @@ node_js: "11"
 
 script: npm run build
 
-before_deploy: mv dist/index.json dist/index-${TRAVIS_TAG}.html
+before_deploy: mv dist/index.html dist/index-${TRAVIS_TAG}.html
 
 deploy:
   skip_cleanup: true
