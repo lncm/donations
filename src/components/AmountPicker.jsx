@@ -60,7 +60,7 @@ class AmountPicker extends Component {
     }
 
     const marks = {};
-    marks[inverseCurve(start)] = AmountPicker.labelFor(start);
+    marks[start === 0 ? 0 : inverseCurve(start)] = AmountPicker.labelFor(start);
 
     for (let i = 10 * (!start ? 1 : start); i <= end; i *= 10) {
       marks[inverseCurve(i)] = AmountPicker.labelFor(i);
@@ -95,7 +95,12 @@ class AmountPicker extends Component {
         min={inverseCurve(!min ? 1 : min)}
         max={inverseCurve(max)}
         marks={AmountPicker.generateMarks(min, max)}
-        step={(inverseCurve(max) - inverseCurve(!min ? 1 : min)) / (max / 10)}
+        step={
+          +(
+            (inverseCurve(max) - inverseCurve(!min ? 1 : min)) /
+            (max / 10)
+          ).toFixed(20)
+        }
         railStyle={{ backgroundColor: 'gold' }}
         trackStyle={{ backgroundColor: 'goldenrod' }}
         handleStyle={{ backgroundColor: 'goldenrod' }}
