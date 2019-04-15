@@ -7,12 +7,14 @@ node_js:
 
 script: npm run build
 
+before_deploy: mv dist/index.json dist/index-${TRAVIS_TAG}.html
+
 deploy:
   skip_cleanup: true
   provider: releases
   api_key:
     secure: JE7pYpkJGZZ7ErQs5zk6fO0hoUN+lyaVczFQrhhWTYHMjjnRwh7whRD6rJHaART4ThDtNT3f4oj7SNVgZ6jKnxBXn2pfM6S7yaIAI8nnZjlCuZj1EhHmFQMG9LbiMFVBvJALDrcCldEq0oTEhRvwBBrNt9CxW9UmpfMBfpd0DmuCu7g8mNUOZz+0LE1PzZfnAEbrlPGFHSerz0gYUcecQzepVTlqyhNh1sJh2R0NmcjssWtHKR+swOq/SXl5e9eGECHtKK1XkmGxdhrxtt60DhFlCfZeLWQ/n0dAkeAtaBGt9qeAULkmqqffAg2TCQJQFEUIM76TiChlvGa3pBTKx/LBAsdJuuRtcqUI5NSx/5cag7HqFz94fL/NclwJadgE0AYPHJVH4eyHcr7oTSL0vudsnlRh6fAveZoZgSUxmnQq7RlBSshl6fyvoSosRafeS/VoOF6uKDAkW69H5gHcxa6U6d87bFlJ/sZTVtNRVAz/IxfMMf6w9qHIfIOx/9gGANE0/5HMuNFz7GPJr4OTuSCCME8+EkPARnoiqmWShptiGqFbnPDZF/fOHmKocX0qvX3u7igh3s+KKIuIsoISYhhnvmUOtIsw7K7CrRVYqjidLecRtNibmHkd7vzuXFc7v5J3E3YdHzyLcfRhYXoSxAtv/4uQffsEZl/VIq3KMxw=
-  file: dist/index.html
+  file: dist/index-${TRAVIS_TAG}.html
   on:
     repo: meeDamian/donations
     tags: true
