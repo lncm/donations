@@ -1,12 +1,9 @@
-// DOMAIN points to the host name where invoicer resides
+// DOMAIN points to the host name where invoicer and lnd reside
 export const DOMAIN = 'meedamian.ddns.net';
 
-// INVOICER_PORT defines port on which invoicer listens
-export const INVOICER_PORT = 2048;
-
-// following URLs define relevant Invoicer's API endpoins
-export const PAYMENT_URL = `http://${DOMAIN}:${INVOICER_PORT}/api/payment`;
-export const INFO_URL = `http://${DOMAIN}:${INVOICER_PORT}/api/info`;
+// following URLs define relevant Invoicer's API endpoints
+export const PAYMENT_URL = `/api/payment`;
+export const INFO_URL = `/api/info`;
 
 // Used in Invoice descriptions, as well as header of the website
 export const RECIPIENT = 'LNCM';
