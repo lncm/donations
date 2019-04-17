@@ -5,8 +5,12 @@ import AmountPicker from './components/AmountPicker';
 class Invoicer {
   // description prepares description for a LN invoice
   static description(sats, isDonation = true, to = RECIPIENT) {
-    const humanAmount = AmountPicker.labelFor(sats);
-    return `${isDonation ? 'Donation' : 'Payment'} of ${humanAmount} to ${to}`;
+    let amount = '';
+    if (sats !== 0) {
+      amount = ` of ${AmountPicker.labelFor(sats)}`;
+    }
+
+    return `${isDonation ? 'Donation' : 'Payment'}${amount} to ${to}`;
   }
 
   // newPayment POSTs to Invoicer requesting either:
