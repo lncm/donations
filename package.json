@@ -4,18 +4,10 @@
   "description": "LN donations page",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint src",
+    "lint": "eslint src/*.js",
     "start": "cross-env NODE_ENV=development webpack-dev-server --open",
     "build": "cross-env NODE_ENV=production webpack",
-    "format": "prettier --write 'packages/**/*.js'",
-    "precommit": "lint-staged"
-  },
-  "lint-staged": {
-    "*.{js,jsx,css,md}": [
-      "prettier --write --single-quote",
-      "eslint --fix",
-      "git add"
-    ]
+    "format": "prettier --write 'packages/**/*.js'"
   },
   "repository": "https://github.com/lncm/donations",
   "author": "meeDamian",
