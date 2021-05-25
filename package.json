@@ -46,7 +46,7 @@
     "babel-eslint": "10.0.1",
     "babel-loader": "8.0.5",
     "base64-inline-loader": "^1.1.1",
-    "browserslist": "4.5.4",
+    "browserslist": "4.16.5",
     "clean-webpack-plugin": "2.0.1",
     "connect-history-api-fallback": "^1.6.0",
     "core-js": "^2.6.5",
